@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mint2Metal Protocol | Technical Whitepaper</title>
+    <meta name="description" content="Mint2Metal Technical Whitepaper: Bridging digital assets with physical commodity custody via Reserve-First architecture." />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        
+         :root {
+            --bg-body: #08090a;
+            --bg-grid: #0f1115;
+            --card-surface: rgba(22, 25, 31, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            /* The "Silver" Gradient */
+            --silver-grad: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            --silver-text: linear-gradient(180deg, #fff 0%, #b0b0b0 100%);
+            --primary: #c0c0c0;
+            --primary-glow: rgba(192, 192, 192, 0.4);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #f0f0f0;
+            --text-muted: #949ba8;
+            --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: "JetBrains Mono", "Courier New", monospace;
+            --max-width: 1100px;
+            --nav-height: 80px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            /* Subtle Grid Background */
+            background-image: linear-gradient( rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        /* Custom Scrollbar */
+        
+         ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s ease;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        /* --- TYPOGRAPHY --- */
+        
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        h1 {
+            background: var(--silver-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        /* Decorative underline for H2 */
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            border-radius: 2px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+        
+        .mono {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            color: #fff;
+            font-weight: 600;
+            border: 1px solid var(--card-border);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+        }
+        /* --- UTILITIES --- */
+        
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .section {
+            padding: 100px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            position: relative;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        /* --- ANIMATIONS --- */
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+        }
+        
+        @keyframes cardHover {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                transform: translateY(-10px) scale(1.02);
+            }
+        }
+        
+        .section {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        /* --- NAVIGATION --- */
+        
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(8, 9, 10, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo svg {
+            stroke: var(--primary);
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: #fff;
+        }
+        
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        /* Join Whitelist Button */
+        
+        .join-whitelist-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+        
+        .join-whitelist-btn:hover {
+            background: #2563eb;
+            box-shadow: 0 0 20px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        /* --- HERO SECTION --- */
+        
+        .hero {
+            padding-top: calc(var(--nav-height) + 80px);
+            padding-bottom: 120px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Decorative Glow behind Hero */
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient( circle, rgba(192, 192, 192, 0.1) 0%, transparent 70%);
+            z-index: -1;
+            filter: blur(60px);
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+        
+        .hero .meta {
+            display: inline-flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 2.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+        }
+        
+        .hero .meta span {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+        }
+        
+        .hero p {
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            font-size: 1.25rem;
+            color: #ccc;
+        }
+        /* --- CARDS (GLASSMORPHISM) --- */
+        
+        .card {
+            background: var(--card-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        /* Inner glow on hover */
+        
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient( 800px circle at var(--mouse-x, center) var(--mouse-y, center), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .card:hover::after {
+            opacity: 1;
+        }
+        
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            border: 1px solid var(--card-border);
+        }
+        
+        .card:hover .icon-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        /* --- FLOW DIAGRAM --- */
+        
+        .flow-container {
+            background: #000;
+            padding: 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            position: relative;
+        }
+        
+        .flow-step {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+        
+        .flow-step:last-child {
+            margin-bottom: 0;
+        }
+        /* Connector Line */
+        
+        .flow-step:not(:last-child)::before {
+            content: "";
+            position: absolute;
+            left: 24px;
+            /* Center of the number */
+            top: 50px;
+            bottom: -30px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            opacity: 0.3;
+        }
+        
+        .step-number {
+            font-size: 1.5rem;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            color: var(--bg-body);
+            background: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px var(--primary-glow);
+            z-index: 2;
+        }
+        /* --- COMPARISON TABLE --- */
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: var(--bg-grid);
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .comparison-table th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
+        
+        .comparison-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .check-icon {
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .cross-icon {
+            color: #ef4444;
+            font-weight: bold;
+        }
+        /* --- ROADMAP --- */
+        
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            border-left: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 4rem;
+        }
+        
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -49px;
+            top: 6px;
+            width: 16px;
+            height: 16px;
+            background: var(--bg-body);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-glow);
+            transition: 0.3s;
+        }
+        
+        .timeline-item:hover::before {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        .timeline-date {
+            font-family: var(--font-mono);
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        /* --- TEAM SECTION --- */
+        
+        #team {
+            background: linear-gradient( 135deg, rgba(8, 9, 10, 0.95) 0%, rgba(15, 17, 21, 0.95) 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 120px 0;
+        }
+        
+        #team::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: radial-gradient( circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%), radial-gradient( circle at 80% 20%, rgba(192, 192, 192, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+        
+        #team .container {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .team-title {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+        
+        .team-title h2 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .team-title p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-muted);
+        }
+        
+        .team-members {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+        }
+        
+        .team-member-card {
+            background: rgba(22, 25, 31, 0.7);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        
+        .team-member-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        
+        .team-member-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .team-member-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .team-member-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.3);
+            animation: cardHover 0.5s ease-out forwards;
+        }
+        
+        .member-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient( 135deg, rgba(59, 130, 246, 0.2), rgba(192, 192, 192, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .team-member-card:hover .member-avatar {
+            transform: scale(1.1) rotate(5deg);
+            border-color: var(--accent);
+            box-shadow: 0 0 25px var(--accent-glow);
+            animation: glowPulse 2s infinite;
+        }
+        
+        .member-avatar i {
+            font-size: 3.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.5s ease;
+        }
+        
+        .team-member-card:hover .member-avatar i {
+            color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .member-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .member-role {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            position: relative;
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        .member-description {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .member-contact {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        .team-member-card:hover .member-contact {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .contact-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .contact-email {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+        
+        .contact-email i {
+            font-size: 1rem;
+        }
+        
+        .contact-email:hover {
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+        
+        .team-quote {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .team-quote::before {
+            content: "\201C";
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 6rem;
+            color: rgba(59, 130, 246, 0.1);
+            font-family: serif;
+            line-height: 1;
+        }
+        
+        .team-quote p {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: var(--text-main);
+            margin-bottom: 0;
+            position: relative;
+            z-index: 1;
+        }
+        /* --- FOOTER & DISCLAIMER --- */
+        
+        footer {
+            background: #000;
+            padding: 6rem 0 3rem;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+        
+        .disclaimer {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #1a1a1a;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* --- RESPONSIVE --- */
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .flow-step {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .flow-step:not(:last-child)::before {
+                display: none;
+            }
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            .team-members {
+                grid-template-columns: 1fr;
+            }
+            .team-member-card {
+                padding: 2rem;
+            }
+            .team-title h2 {
+                font-size: 2rem;
+            }
+        }
+        /* SVG Icon styling */
+        
+        svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"
+            />
+          </svg> Mint2Metal
+            </div>
+            <ul class="nav-links">
+                <li><a href="#summary">Summary</a></li>
+                <li><a href="#problem">Problem</a></li>
+                <li><a href="#solution">Solution</a></li>
+                <li><a href="#architecture">Architecture</a></li>
+                <li><a href="#token">DST Token</a></li>
+                <li><a href="#team">Team</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+            </ul>
+            <button id="join-whitelist-btn" class="join-whitelist-btn">Join Whitelist</button>
+        </div>
+    </nav>
+
+
+
+    <section class="hero">
+        <div class="container">
+            <div class="meta">
+                <span>Version: 1.0.0</span>
+                <span>Date: January 7, 2026</span>
+                <span>Status: Executive Technical Brief</span>
+            </div>
+            <h1>Mint2Metal Protocol</h1>
+            <p>
+                Bridging the gap between digital asset representation and physical commodity custody. A Reserve-First architecture ensuring 1:1 allocated backing at all times.
+            </p>
+        </div>
+    </section>
+
+    <section id="summary" class="section">
+        <div class="container">
+            <h2>1. Executive Summary</h2>
+            <div class="card" style="border-left: 4px solid var(--primary)">
+                <p style="font-size: 1.2rem; color: #fff">
+                    Mint2Metal solves the fundamental disconnect between digital asset representation and physical commodity custody. Unlike existing "paper silver" derivatives or fractional-reserve tokens, Mint2Metal employs a strict <strong>Reserve-First architecture</strong>.
+                </p>
+                <p>
+                    Digital Silver Tokens (DST) are minted strictly
+                    <strong>after</strong> physical settlement and custodial verification are confirmed on-chain. The protocol bridges Indian retail demand for physical redemption with global Web3 liquidity, ensuring 1:1 allocated backing at all times.
+                </p>
+                <div class="grid-3" style="margin-top: 2rem">
+                    <div class="highlight">🌐 Global Liquidity</div>
+                    <div class="highlight">🇮🇳 India Retail Access</div>
+                    <div class="highlight">🔒 1:1 Physical Backing</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="problem" class="section">
+        <div class="container">
+            <h2>2. Problem Statement</h2>
+            <p style="margin-bottom: 2rem">
+                Current silver investment mechanisms suffer from trust deficits and operational inefficiencies.
+            </p>
+            <div class="grid-3">
+                <div class="card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24">
+                <path
+                  d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+                />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+                    </div>
+                    <h3>Counterparty Risk</h3>
+                    <p>
+                        Most silver investments are "unallocated," meaning investors are unsecured creditors of a bank rather than owners of specific metal. In a default, you are last in line.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+                    </div>
+                    <h3>Verification Latency</h3>
+                    <p>
+                        Competitor protocols often mint tokens upon fiat receipt (T+0), acquiring metal days later (T+2). This creates a dangerous window of temporary fractional reserves.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+                    </div>
+                    <h3>Jurisdictional Friction</h3>
+                    <p>
+                        Cross-border physical redemption is legally complex. Most "global redemption" promises are largely unenforceable for retail users due to regulatory conflicts.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="solution" class="section">
+        <div class="container">
+            <h2>3. The Solution: Deterministic Minting</h2>
+            <p>
+                Mint2Metal enforces a strict dependency chain:
+                <span class="mono">Physical Custody → Oracle Verification → Token Minting</span
+          >.
+        </p>
+
+        <div class="grid-2" style="margin-top: 2rem">
+          <div class="card">
+            <h3>Reserve-First Design</h3>
+            <p>
+              The smart contract prevents minting unless the vault balance
+              (verified by oracle) exceeds the current token supply. No paper
+              promises.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Batch Settlement</h3>
+            <p>
+              User orders are aggregated; metal is acquired and vaulted in bulk
+              to optimize premiums and logistics before tokens are distributed.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Segregated Compliance</h3>
+            <p>
+              A dual-layer access control system separates users based on
+              jurisdiction (India vs. Global) to manage redemption rights
+              legally.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="architecture" class="section">
+      <div class="container">
+        <h2>4. System Architecture</h2>
+        <div class="grid-2">
+          <div
+            class="card"
+            style="
+              border: 1px dashed var(--card-border);
+              background: transparent;
+            "
+          >
+            <h3 class="mono">01. Off-Chain Infrastructure</h3>
+            <ul style="margin-left: 1rem">
+              <li style="margin-bottom: 1rem">
+                <strong>Custodians:</strong> Insured, third-party vaults holding
+                allocated London Good Delivery silver.
+              </li>
+              <li style="margin-bottom: 1rem">
+                <strong>Auditors:</strong> Independent entities performing
+                physical inventory reconciliation.
+              </li>
+              <li style="margin-bottom: 1rem">
+                <strong>Settlement Oracles:</strong> Data feeds bridging
+                off-chain vault reports to on-chain contracts.
+              </li>
+            </ul>
+          </div>
+          <div
+            class="card"
+            style="
+              border: 1px dashed var(--card-border);
+              background: transparent;
+            "
+          >
+            <h3 class="mono">02. On-Chain Contracts</h3>
+            <ul style="margin-left: 1rem">
+              <li style="margin-bottom: 1rem">
+                <strong>DST_Contract:</strong> ERC-20 compliant token
+                representing ownership. Pausable and burnable.
+              </li>
+              <li style="margin-bottom: 1rem">
+                <strong>MintingController:</strong> Privileged contract. Only
+                mints upon receiving a signed message from the Auditor/Oracle
+                confirming a new deposit.
+              </li>
+              <li style="margin-bottom: 1rem">
+                <strong>JurisdictionRegistry:</strong> Whitelists wallets based
+                on KYC status and region.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top: 4rem">
+          <h3>Settlement & Minting Flow</h3>
+          <p>
+            The protocol rejects real-time minting for a secure, audited
+            lifecycle:
+          </p>
+
+          <div class="flow-container">
+            <div class="flow-step">
+              <div class="step-number">01</div>
+              <div>
+                <h4>Aggregation</h4>
+                <p class="mono">T_cutoff</p>
+                <p>
+                  Users deposit fiat; orders are batched until a specific cutoff
+                  time is reached.
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-number">02</div>
+              <div>
+                <h4>Acquisition & Vaulting</h4>
+                <p>
+                  Treasury purchases physical silver; metal is delivered to the
+                  secure Vault.
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-number">03</div>
+              <div>
+                <h4>Verification</h4>
+                <p>
+                  Vault issues a Warehouse Receipt. Auditor signs a
+                  cryptographic proof of deposit.
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-number">04</div>
+              <div>
+                <h4>Minting</h4>
+                <p>
+                  Oracle relays proof to the MintingController. DST_Contract
+                  mints tokens exactly matching the new silver weight (1 DST =
+                  1g).
+                </p>
+              </div>
+            </div>
+            <div class="flow-step">
+              <div class="step-number">05</div>
+              <div>
+                <h4>Distribution</h4>
+                <p>Tokens are airdropped to user wallets.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="token" class="section">
+      <div class="container">
+        <h2>5. Token & User Segmentation</h2>
+
+        <div class="card" style="margin-bottom: 3rem">
+          <h3>Digital Silver Token (DST)</h3>
+          <div class="grid-3" style="margin-top: 1rem">
+            <div>
+              <span class="text-muted">Asset</span>
+                <div style="font-size: 1.2rem; color: #fff">
+                    1 DST = 1 Gram .999 Fine Silver
+                </div>
+        </div>
+        <div>
+            <span class="text-muted">Type</span>
+            <div style="font-size: 1.2rem; color: #fff">
+                Non-inflationary, Asset-Backed
+            </div>
+        </div>
+        <div>
+            <span class="text-muted">Decimals</span>
+            <div style="font-size: 1.2rem; color: #fff">
+                18 (Micro-gram accounting)
+            </div>
+        </div>
+        </div>
+        <p style="
+              margin-top: 1.5rem;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+              padding-top: 1rem;
+            ">
+            <strong>Mechanics:</strong> Minting is mathematically bounded by reserve proofs. Burning is mandatory for physical redemption.
+        </p>
+        </div>
+
+        <h3>User Segmentation</h3>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Segment A: India (Domestic)</th>
+                    <th>Segment B: International (Global)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Access</strong></td>
+                    <td>INR Banking Rails</td>
+                    <td>Web3 Wallet / Stablecoins</td>
+                </tr>
+                <tr>
+                    <td><strong>KYC</strong></td>
+                    <td>Full KYC (PAN/Aadhar)</td>
+                    <td>Basic AML / Sanctions Check</td>
+                </tr>
+                <tr>
+                    <td><strong>Redemption</strong></td>
+                    <td>
+                        <span class="check-icon">✔</span> Enabled. Can burn DST for physical delivery.
+                    </td>
+                    <td>
+                        <span class="cross-icon">✖</span> Disabled. Must sell DST to exit.
+                    </td>
+                </tr>
+                <tr>
+                    <td><strong>Use Case</strong></td>
+                    <td>Savings, Physical accumulation.</td>
+                    <td>DeFi collateral, Price exposure.</td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="grid-2">
+                <div>
+                    <h2>6. Compliance & Safeguards</h2>
+                    <div class="card" style="background: transparent; border: none; padding: 0">
+                        <ul style="display: grid; gap: 1rem">
+                            <li style="
+                    background: rgba(255, 255, 255, 0.03);
+                    padding: 1.5rem;
+                    border-radius: 8px;
+                    border-left: 2px solid var(--accent);
+                  ">
+                                <strong style="color: #fff; display: block; margin-bottom: 0.5rem">Regulatory Alignment</strong
+                  >
+                  Adheres to Indian PMLA guidelines and global FATF Travel
+                  Rules.
+                </li>
+                <li
+                  style="
+                    background: rgba(255, 255, 255, 0.03);
+                    padding: 1.5rem;
+                    border-radius: 8px;
+                    border-left: 2px solid var(--accent);
+                  "
+                >
+                  <strong
+                    style="color: #fff; display: block; margin-bottom: 0.5rem"
+                    >Proof of Reserve (PoR)</strong
+                  >
+                  Chainlink (or equivalent) feeds provide real-time transparency
+                  of vault balances.
+                </li>
+                <li
+                  style="
+                    background: rgba(255, 255, 255, 0.03);
+                    padding: 1.5rem;
+                    border-radius: 8px;
+                    border-left: 2px solid var(--accent);
+                  "
+                >
+                  <strong
+                    style="color: #fff; display: block; margin-bottom: 0.5rem"
+                    >Circuit Breakers</strong
+                  >
+                  Minting automatically halts if Oracle_Reserve < Total_Supply.
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h2>7. Economic Model</h2>
+            <div class="card">
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 0.5rem;
+                "
+              >
+                <strong style="color: #fff">Minting Fee</strong>
+                                <span class="mono">Entry Fee</span>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem">
+                        Charged on entry to cover brokerage and transport.
+                    </p>
+
+                    <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 0.5rem;
+                ">
+                        <strong style="color: #fff">Storage Fee</strong>
+                        <span class="mono">~0.5% / Year</span>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 1.5rem; font-size: 0.9rem">
+                        Annualized fee to cover insurance and vaulting costs.
+                    </p>
+
+                    <div style="
+                  display: flex;
+                  justify-content: space-between;
+                  margin-bottom: 0.5rem;
+                ">
+                        <strong style="color: #fff">Redemption Fee</strong>
+                        <span class="mono">Flat + Shipping</span>
+                    </div>
+                    <p class="text-muted" style="margin-bottom: 0; font-size: 0.9rem">
+                        User pays upon physical withdrawal to cover logistics.
+                    </p>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- NEW TEAM SECTION -->
+    <section id="team" class="section">
+        <div class="container">
+            <div class="team-title">
+                <h2>Our Founding Team</h2>
+                <p>
+                    The visionaries behind Mint2Metal Protocol, combining expertise in blockchain technology, financial systems, and regulatory compliance to build a trusted bridge between digital and physical assets.
+                </p>
+            </div>
+
+            <div class="team-members">
+                <div class="team-member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3 class="member-name">Teja Karanam</h3>
+                    <div class="member-role">Co-Founder & Technical Lead</div>
+                    <p class="member-description">
+                        Blockchain architect with expertise in smart contract development and decentralized systems. Leads the technical implementation of the Mint2Metal protocol with a focus on security and scalability.
+                    </p>
+                    <div class="member-contact">
+                        <span class="contact-label">Contact Email</span>
+                        <a href="mailto:tejakaranam76252@gmail.com" class="contact-email">
+                            <i class="fas fa-envelope"></i> tejakaranam76252@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                <div class="team-member-card">
+                    <div class="member-avatar">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="member-name">Pooja Chandwani</h3>
+                    <div class="member-role">Co-Founder & Strategy Lead</div>
+                    <p class="member-description">
+                        Financial strategist specializing in commodity markets and regulatory frameworks. Drives business development, partnerships, and compliance strategy for the Mint2Metal ecosystem.
+                    </p>
+                    <div class="member-contact">
+                        <span class="contact-label">Contact Email</span>
+                        <a href="mailto:poojachandwani2005@gmail.com" class="contact-email">
+                            <i class="fas fa-envelope"></i> poojachandwani2005@gmail.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-quote">
+                <p>
+                    "Our mission is to create a transparent, secure bridge between the digital and physical worlds of finance. By combining blockchain's trustless nature with real-world asset custody, we're building the future of commodity investment."
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="roadmap" class="section">
+        <div class="container">
+            <h2>8. Roadmap</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-date">Phase 1 (Q1 2026)</span>
+                    <h3>Foundation</h3>
+                    <p>
+                        Contract deployment, Custodian/Auditor legal frameworks established.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-date">Phase 2 (Q2-Q3 2026)</span>
+                    <h3>Domestic Launch</h3>
+                    <p>
+                        India market launch, INR on-ramp integration, physical redemption capabilities go live.
+                    </p>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-date">Phase 3 (Q4 2026)</span>
+                    <h3>Global Expansion</h3>
+                    <p>
+                        International launch, DEX listings, and integration with major DeFi protocols.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem; opacity: 0.7">
+                <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"
+            />
+          </svg> Mint2Metal
+            </div>
+            <div class="disclaimer">
+                <strong>Disclaimer:</strong> Mint2Metal DST is a digital receipt of ownership, not a financial security. Token value is pegged to silver market prices. Physical redemption is subject to local geography and logistics. The information provided
+                in this document is for general information purposes only and is subject to change without notice.
+            </div>
+            <p style="margin-top: 2rem; color: #444; font-size: 0.8rem">
+                &copy; 2026 Mint2Metal Protocol. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Button functionality
+        const btn = document.getElementById('join-whitelist-btn');
+
+        // FIXED redirect (removed leading slash)
+        btn.onclick = function() {
+            window.location.href = 'whitelist.html';
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Join Whitelist | Mint2Metal Protocol</title>
+    <meta name="description" content="Join the Mint2Metal whitelist for early access to the protocol." />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        
+         :root {
+            --bg-body: #08090a;
+            --bg-grid: #0f1115;
+            --card-surface: rgba(22, 25, 31, 0.6);
+            --card-border: rgba(255, 255, 255, 0.08);
+            /* The "Silver" Gradient */
+            --silver-grad: linear-gradient(135deg, #ffffff 0%, #a0a0a0 100%);
+            --silver-text: linear-gradient(180deg, #fff 0%, #b0b0b0 100%);
+            --primary: #c0c0c0;
+            --primary-glow: rgba(192, 192, 192, 0.4);
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --text-main: #f0f0f0;
+            --text-muted: #949ba8;
+            --font-main: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: "JetBrains Mono", "Courier New", monospace;
+            --max-width: 1100px;
+            --nav-height: 80px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.7;
+            overflow-x: hidden;
+            /* Subtle Grid Background */
+            background-image: linear-gradient( rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        /* Custom Scrollbar */
+        
+         ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: 0.3s ease;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        /* --- TYPOGRAPHY --- */
+        
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        h1 {
+            background: var(--silver-grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+        
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+        /* Decorative underline for H2 */
+        
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            border-radius: 2px;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+        
+        .mono {
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .highlight {
+            color: #fff;
+            font-weight: 600;
+            border: 1px solid var(--card-border);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(5px);
+        }
+        /* --- UTILITIES --- */
+        
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        .section {
+            padding: 100px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            position: relative;
+        }
+        
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+        
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        /* --- ANIMATIONS --- */
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        @keyframes glowPulse {
+            0% {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 25px rgba(59, 130, 246, 0.6);
+            }
+            100% {
+                box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+            }
+        }
+        
+        @keyframes cardHover {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                transform: translateY(-10px) scale(1.02);
+            }
+        }
+        
+        .section {
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        /* --- NAVIGATION --- */
+        
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: var(--nav-height);
+            background: rgba(8, 9, 10, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo svg {
+            stroke: var(--primary);
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: #fff;
+        }
+        
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary);
+            transition: width 0.3s;
+            box-shadow: 0 0 8px var(--primary-glow);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        /* --- CARDS (GLASSMORPHISM) --- */
+        
+        .card {
+            background: var(--card-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--card-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+        /* Inner glow on hover */
+        
+        .card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient( 800px circle at var(--mouse-x, center) var(--mouse-y, center), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+        
+        .card:hover::after {
+            opacity: 1;
+        }
+        
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: #fff;
+            border: 1px solid var(--card-border);
+        }
+        
+        .card:hover .icon-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        /* --- FOOTER & DISCLAIMER --- */
+        
+        footer {
+            background: #000;
+            padding: 6rem 0 3rem;
+            border-top: 1px solid var(--card-border);
+            text-align: center;
+        }
+        
+        .disclaimer {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #1a1a1a;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        /* --- RESPONSIVE --- */
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+        }
+        /* Form Styles */
+        
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            background: var(--card-surface);
+            color: var(--text-main);
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+        
+        .submit-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .submit-btn:hover {
+            background: #2563eb;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        
+        .submit-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .message.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid #22c55e;
+        }
+        
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="container nav-content">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"
+            />
+          </svg> Mint2Metal
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/#summary">Summary</a></li>
+                <li><a href="/#problem">Problem</a></li>
+                <li><a href="/#solution">Solution</a></li>
+                <li><a href="/#architecture">Architecture</a></li>
+                <li><a href="/#token">DST Token</a></li>
+                <li><a href="/#team">Team</a></li>
+                <li><a href="/#roadmap">Roadmap</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="section" style="padding-top: calc(var(--nav-height) + 80px);">
+        <div class="container">
+            <div class="form-container">
+                <h2>Join the Whitelist</h2>
+                <p>Be the first to know when Mint2Metal launches. Join our exclusive whitelist for early access.</p>
+                <form id="whitelist-form">
+                    <div class="form-group">
+                        <label for="name">Name (Optional)</label>
+                        <input type="text" id="name" name="name" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stellarWalletId">Stellar Wallet ID (Optional)</label>
+                        <input type="text" id="stellarWalletId" name="stellarWalletId" placeholder="Your Stellar wallet address">
+                    </div>
+                    <button type="submit" id="submit-btn" class="submit-btn">Join Whitelist</button>
+                </form>
+                <div id="message" class="message"></div>
+                <a href="index.html" class="back-link">← Back to Home</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="logo" style="justify-content: center; margin-bottom: 2rem; opacity: 0.7">
+                <svg viewBox="0 0 24 24">
+            <path
+              d="M12 2L2 7l10 5 10-5-10-5zm0 9l2.5-1.25L12 8.5l-2.5 1.25L12 11zm0 2.5l-5-2.5-5 2.5L12 22l10-8.5-5-2.5-5 2.5z"
+            />
+          </svg> Mint2Metal
+            </div>
+            <div class="disclaimer">
+                <strong>Disclaimer:</strong> Mint2Metal DST is a digital receipt of ownership, not a financial security. Token value is pegged to silver market prices. Physical redemption is subject to local geography and logistics. The information provided
+                in this document is for general information purposes only and is subject to change without notice.
+            </div>
+            <p style="margin-top: 2rem; color: #444; font-size: 0.8rem">
+                &copy; 2026 Mint2Metal Protocol. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Form functionality
+        const form = document.getElementById('whitelist-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageDiv = document.getElementById('message');
+
+        // Form validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Reset form
+        function resetForm() {
+            form.reset();
+            messageDiv.textContent = '';
+            messageDiv.className = 'message';
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Join Whitelist';
+        }
+
+        // Form submission
+        form.onsubmit = async function(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('name').value.trim();
+            const stellarWalletId = document.getElementById('stellarWalletId').value.trim();
+
+            // Validate email
+            if (!email || !validateEmail(email)) {
+                showMessage('Please enter a valid email address.', 'error');
+                return;
+            }
+
+            // Disable submit button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/whitelist', {
+
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name || undefined,
+                        email,
+                        stellarWalletId: stellarWalletId || undefined,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('Successfully joined the whitelist!', 'success');
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'An error occurred. Please try again.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Join Whitelist';
+                }
+            } catch (error) {
+                showMessage('Network error. Please check your connection and try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Join Whitelist';
+            }
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = `message ${type}`;
+        }
+    </script>
+</body>
+
+</html>
